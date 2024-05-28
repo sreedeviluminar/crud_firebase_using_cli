@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "172613426022",
+    "project_id": "crud-storage-11",
+    "storage_bucket": "crud-storage-11.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:172613426022:android:64176d880b2d20e01706a7",
+        "android_client_info": {
+          "package_name": "com.sree.newfireproject.newfireproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCcIkY44km2IvqkM6llNcoSrKv40t3XS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

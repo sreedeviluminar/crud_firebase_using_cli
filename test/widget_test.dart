@@ -7,14 +7,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:newfireproject/firebase_image_storage.dart';
 
 import 'package:newfireproject/main.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(FireBaseCrud());
-
+   // await tester.pumpWidget(FireBaseCrud());
+    await tester.pumpWidget(ImgStorage());
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);
     expect(find.text('1'), findsNothing);

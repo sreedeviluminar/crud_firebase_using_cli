@@ -54,7 +54,43 @@ class _ImgStorageState extends State<ImgStorage> {
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
                 ),
               ],
-            )
+            ),
+            const Divider(thickness: 3,color: Colors.black,),
+            Expanded(
+                child: FutureBuilder(
+                    future: fetchImages(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return GridView.builder(
+                          itemCount: snapshot.data?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            final image = snapshot.data![index];
+                            return Card(
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                      child: Image.network(image['imageUrl'])),
+                                  Text(image['uploaded_by']),
+                                  Text("time: ${image['time']}"),
+                                  MaterialButton(
+                                    onPressed: () => deleteImage(image['path']),
+                                    minWidth: 100,
+                                    color: Colors.red,
+                                    shape: const StadiumBorder(),
+                                    child: const Text('Delete'),)
+                                ],
+                              ),
+                            );
+                          },
+                          gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2),
+                        );
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }))
           ],
         ),
       ),
@@ -77,7 +113,7 @@ class _ImgStorageState extends State<ImgStorage> {
             imageFile,
             SettableMetadata(customMetadata: {
               "uploadedby": "xxxxxx",
-              "time": "${DateTime.now().isUtc}"
+              "time": "current time"
             }));
       } on FirebaseException catch (error) {
         print("Exception occured while uploading picture $error");
@@ -86,4 +122,33 @@ class _ImgStorageState extends State<ImgStorage> {
       print("Exception during File fetching $error");
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchImages() async {
+    List<Map<String, dynamic>> images = [];
+    //ListResult class holds the list of values and its metadata as a result of  list listAll methods
+    final ListResult result = await storage.ref().list();
+    //reference of each item stored in firebase storage
+    final List<Reference> allFiles = result.items;
+
+    await Future.forEach(allFiles, (singleFile) async {
+      final String fileUrl = await singleFile.getDownloadURL();
+      final FullMetadata metadata = await singleFile.getMetadata();
+
+      images.add({
+        'imageUrl': fileUrl,
+        'path': singleFile.fullPath,
+        'uploaded_by': metadata.customMetadata?['uploadedby'] ?? "NoData",
+        'time': metadata.customMetadata?['time']??"No Time"
+      });
+    });
+    setState(() {});
+    return images;
+
+  }
+
+  Future<void> deleteImage(String imagePath) async{
+    await storage.ref(imagePath).delete();
+    setState((){});
+  }
 }
+
